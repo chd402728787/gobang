@@ -5,12 +5,33 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="./dist/vue.js"></script>
+    <title>五子棋</title>
+    <link rel="stylesheet" href="index.css" />
 </head>
 
 <body>
-
+    <!--主界面-->
+    <div id="mainScreen">
+        <!--大标题-->
+        <a href="" class="mainLogo"></a>
+        <h1 class="mainTitle">五子棋</h1>
+        <!--结果文字，对局结束后跳出-->
+        <label class="result">{{victory}}</label>
+        <!--功能按钮-->
+        <div class="fButtons">
+            <input type="button" value="重新开始" class="restart" @click="restartInit()" />
+            <input type="button" value="悔棋" class="regret" @click="regret()" />
+            <input type="button" value="撤销悔棋" class="undo" @click="undo()" />
+            <input type="button" value="投降" class="giveUp" @click="giveUp()" />
+            <input type="button" value="重新开始" class="playAgain" @click="playAgain" />
+        </div>
+        <!--游戏主界面-->
+        <div class="mainGame">
+            <canvas id="goBangCanvas"></canvas>
+        </div>
+    </div>
+    <script src="dist/vue.js"></script>
+    <script src="test.js"></script>
 </body>
 
 </html>
