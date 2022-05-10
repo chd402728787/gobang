@@ -17,13 +17,15 @@
         <h1 class="mainTitle">五子棋</h1>
         <!--结果文字，对局结束后跳出-->
         <label class="result">{{victory}}</label>
+        <!-- 五个棋子连到一起会出现一条红色线，我们管这个红色线叫strike -->
+        <div id="strike" class="strike"></div>
         <!--功能按钮-->
         <div class="fButtons">
-            <input type="button" value="重新开始" class="restart" @click="restartInit()" />
+            <input type="button" value="开始" class="start" @click="startInit()" />
             <input type="button" value="悔棋" class="regret" @click="regret()" />
             <input type="button" value="撤销悔棋" class="undo" @click="undo()" />
             <input type="button" value="投降" class="giveUp" @click="giveUp()" />
-            <input type="button" value="重新开始" class="playAgain" @click="playAgain" />
+            <input type="button" value="重新开始" class="playAgain" @click="playAgain()" />
         </div>
         <!--游戏主界面-->
         <div class="mainGame">
