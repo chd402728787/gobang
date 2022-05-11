@@ -11,18 +11,28 @@ var mainScreen = new Vue({
             [1, 1], //左斜线
             [1, -1] //右斜线
         ],
-        flag: false
+        flag: false,
+        img: ["images/黑.png", "images/白.png"],
+        showBefore: true,
+        showIng: false
     },
 
+    created() {
+
+    },
     mounted() {
         this.gameInit();
+        let gbcanvas = this.$refs.gbcanvas;
+        let gbcontext = gbcanvas.getContext("2d");
+        gbcontext.font = '56px "微软雅黑"';
+        gbcontext.fillStyle = "white";
+        gbcontext.fillText("点击按钮开始游戏", gbcanvas.width / 4, gbcanvas.height / 2);
     },
 
     methods: {
         //初始化
         gameInit() {
-            console.log("初始化成功！");
-            const gBCanvas = document.getElementById("goBangCanvas");
+            //console.log("初始化成功！");
             this.drawBoard();
         },
         //初始化棋盘数组
@@ -40,17 +50,17 @@ var mainScreen = new Vue({
             this.repaint();
             this.chessArr();
             let gbcanvas = this.$refs.gbcanvas;
-            let context = gbcanvas.getContext("2d");
+            let gbcontext = gbcanvas.getContext("2d");
             //绘制，五子棋标准棋盘为15×15
-            context.strokeStyle = '#666';
+            gbcontext.strokeStyle = '#666';
             for (let i = 0; i < 15; i++) {
                 //canvas宽高为450
-                context.moveTo(30 + i * 60, 30);
-                context.lineTo(30 + i * 60, gbcanvas.height - 30);
-                context.stroke();
-                context.moveTo(30, 30 + i * 60);
-                context.lineTo(gbcanvas.width - 30, 30 + i * 60);
-                context.stroke();
+                gbcontext.moveTo(30 + i * 60, 30);
+                gbcontext.lineTo(30 + i * 60, gbcanvas.height - 30);
+                gbcontext.stroke();
+                gbcontext.moveTo(30, 30 + i * 60);
+                gbcontext.lineTo(gbcanvas.width - 30, 30 + i * 60);
+                gbcontext.stroke();
             }
         },
         //绘制棋子
@@ -65,17 +75,25 @@ var mainScreen = new Vue({
         },
         //开始
         startInit() {
+            this.drawBoard();
             const gbcanvas = this.$refs.gbcanvas;
+            this.showBefore = false;
+            this.showIng = true;
             //添加点击监听事件
             gbcanvas.addEventListener("click", e => {
+                if (this.flag == true) {
+                    alert("游戏结束,请重新开始~");
+                    return;
+                    //this.playAgain();
+                }
                 //判断点击范围是否越出棋盘
-                if (e.offsetx < 30 || e.offsetx > 900 || e.offsetY < 30 || e.offsetY > 900) {
+                if (e.offsetx < 30 || e.offsetx > 900 || e.offsetY < 10 || e.offsetY > 900) {
                     return;
                 }
                 //落子
                 let x = Math.floor(e.offsetX / 60);
                 let y = Math.floor(e.offsetY / 60);
-                console.log('this.chessMapArr 数组', this.chessMapArr)
+                //console.log('this.chessMapArr 数组', this.chessMapArr)
                 if (this.chessMapArr[x][y] == 0) {
                     console.log('落下棋子', x, y, this.chessColor[this.step % 2])
                     this.drawChess(x * 60 + 30, y * 60 + 30, this.chessColor[this.step % 2]);
@@ -86,36 +104,23 @@ var mainScreen = new Vue({
                     }
                     //更换下棋方
                     this.step++;
-                    if (this.flag == true) {
-                        //跳出XX方胜利
-
-
-
-
-
-                        this.playAgain();
-                    }
-                } else {
+                    //更换鼠标样式
+                    styleStr = "url(" + this.img[this.step % 2] + "),auto";
+                    document.body.style.cursor = styleStr;
+                } else if (this.chessMapArr[x][y] != 0) {
                     alert("已有棋子！")
                 }
             })
         },
-        //悔棋
-        regret() {
-
-        },
-        //撤销悔棋
-        undo() {
-
-        },
         //投降
         giveUp() {
-            if (step > 0) {
+            if (this.step > 0) {
                 if (this.chessColor[this.step % 2] == "black")
                     this.victory = "白子棋方胜利！";
                 else
                     this.victory = "黑子棋方胜利！";
-                flag = true;
+                this.flag = true;
+                this.gameOverText();
             }
         },
         //重新开始
@@ -143,6 +148,7 @@ var mainScreen = new Vue({
                     } else break;
                 }
             }
+
             for (let j = 1; j < 5; j++) {
                 if (this.chessMapArr[x - j * mode[0]]) {
                     if (this.chessMapArr[x - j * mode[0]][y - j * mode[1]] == color) {
@@ -160,8 +166,20 @@ var mainScreen = new Vue({
                 }
                 // 游戏结束
                 // console.log('游戏结束')
+                this.gameOverText();
                 this.flag = true;
             }
+        },
+        //游戏结束文本
+        gameOverText() {
+            let gbcanvas = this.$refs.gbcanvas;
+            let gbcontext = gbcanvas.getContext("2d");
+            gbcontext.font = '72px "微软雅黑"';
+            gbcontext.fillStyle = "white";
+            gbcontext.fillText(this.victory, gbcanvas.width / 4, gbcanvas.height / 2);
+            gbcontext.font = '48px "微软雅黑"';
+            gbcontext.fillStyle = "red";
+            gbcontext.fillText("点击上方按钮重新开始", gbcanvas.width / 4, gbcanvas.height / 2 + 100);
         }
     },
 

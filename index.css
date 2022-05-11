@@ -1,0 +1,30 @@
+body {
+    margin: 0;
+    padding: 0;
+    cursor: url(images/黑.png), auto
+}
+
+.mainTitle {
+    text-align: center;
+}
+
+.start,
+.giveUp,
+.playAgain {
+    background: bisque;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    width: 100px;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+#game-over-area {
+    text-align: center;
+    border: indigo 8px solid;
+    padding: 50px;
+    width: 50%;
+    margin-top: 50px;
+}
