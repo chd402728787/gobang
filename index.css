@@ -1,7 +1,12 @@
 body {
     margin: 0;
     padding: 0;
-    cursor: url(images/黑.png), auto
+    cursor: url(images/黑.png), auto;
+    background: url(/images/背景图.jpg) no-repeat center center fixed;
+    background-size: cover;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
 }
 
 .mainTitle {
