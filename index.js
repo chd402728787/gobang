@@ -14,22 +14,55 @@ var mainScreen = new Vue({
         flag: false,
         img: ["images/黑.png", "images/白.png"],
         showBefore: true,
-        showIng: false
+        showIng: false,
+        screenWidth: document.documentElement.clientWidth / 1.5, //屏幕宽度
+        screenHeight: document.documentElement.clientWidth / 1.5, //屏幕高度
     },
 
     created() {
-
+        this.windowSize();
     },
     mounted() {
         this.gameInit();
         let gbcanvas = this.$refs.gbcanvas;
         let gbcontext = gbcanvas.getContext("2d");
-        gbcontext.font = '56px "微软雅黑"';
+        let fontpx = this.screenWidth / 15;
+        //console.log(this.screenWidth, fontpx);
+        //自适应canvas文本
+        gbcontext.font = '' + fontpx + 'px "微软雅黑"';
         gbcontext.fillStyle = "white";
-        gbcontext.fillText("点击按钮开始游戏", gbcanvas.width / 4, gbcanvas.height / 2);
+        gbcontext.fillText("点击按钮开始游戏", this.screenWidth / 4, this.screenHeight / 2);
+
+        //监听屏幕大小
+        window.addEventListener('resize', e => {
+            //棋盘随最小的边进行变化棋盘，比如宽比高小，棋盘就是以宽为主的正方形
+            this.windowSize();
+            setTimeout(() => {
+                this.gameInit();
+            }, 300);
+        })
     },
 
     methods: {
+        //屏幕自适应
+        windowSize() {
+            if (document.body.clientWidth > 1800) {
+                //防止棋盘过大
+                this.screenWidth = 1800 / 1.5;
+                this.screenHeight = 1800 / 1.5;
+            }
+            let clientWidth = document.documentElement.clientWidth;
+            let clientHeight = document.documentElement.clientHeight;
+            console.log(clientWidth, clientHeight);
+            if (clientWidth > clientHeight) {
+                this.screenHeight = clientHeight / 1.5;
+                this.screenWidth = this.screenHeight;
+            } else {
+                this.screenWidth = clientWidth / 1.5;
+                this.screenHeight = this.screenWidth;
+            }
+
+        },
         //初始化
         gameInit() {
             //console.log("初始化成功！");
@@ -54,13 +87,23 @@ var mainScreen = new Vue({
             //绘制，五子棋标准棋盘为15×15
             gbcontext.strokeStyle = '#666';
             for (let i = 0; i < 15; i++) {
-                //canvas宽高为450
-                gbcontext.moveTo(30 + i * 60, 30);
-                gbcontext.lineTo(30 + i * 60, gbcanvas.height - 30);
+                // //canvas宽高为900
+                // gbcontext.moveTo(30 + i * 60, 30);
+                // gbcontext.lineTo(30 + i * 60, gbcanvas.height - 30);
+                // gbcontext.stroke();
+                // gbcontext.moveTo(30, 30 + i * 60);
+                // gbcontext.lineTo(gbcanvas.width - 30, 30 + i * 60);
+                // gbcontext.stroke();
+                //实现canvas适应盒子大小变化
+                let lineWidth = this.screenWidth / 15;
+                let lineHeight = lineWidth;
+                gbcontext.moveTo(lineWidth / 2 + i * lineWidth, lineWidth / 2);
+                gbcontext.lineTo(lineHeight / 2 + i * lineHeight, gbcanvas.height - lineHeight / 2);
                 gbcontext.stroke();
-                gbcontext.moveTo(30, 30 + i * 60);
-                gbcontext.lineTo(gbcanvas.width - 30, 30 + i * 60);
+                gbcontext.moveTo(lineHeight / 2, lineHeight / 2 + i * lineHeight);
+                gbcontext.lineTo(gbcanvas.width - lineWidth / 2, lineWidth / 2 + i * lineWidth);
                 gbcontext.stroke();
+
             }
         },
         //绘制棋子
@@ -68,7 +111,7 @@ var mainScreen = new Vue({
             let gbcanvas = this.$refs.gbcanvas;
             let context = gbcanvas.getContext("2d");
             context.beginPath();
-            context.arc(x, y, 25, 0, Math.PI * 2, false);
+            context.arc(x, y, this.screenWidth / 15 / 2, 0, Math.PI * 4, false);
             context.closePath();
             context.fillStyle = color;
             context.fill();
@@ -91,12 +134,13 @@ var mainScreen = new Vue({
                     return;
                 }
                 //落子
-                let x = Math.floor(e.offsetX / 60);
-                let y = Math.floor(e.offsetY / 60);
+                let lineWidth = this.screenWidth / 15;
+                let x = Math.floor(e.offsetX / lineWidth);
+                let y = Math.floor(e.offsetY / lineWidth);
                 //console.log('this.chessMapArr 数组', this.chessMapArr)
                 if (this.chessMapArr[x][y] == 0) {
                     console.log('落下棋子', x, y, this.chessColor[this.step % 2])
-                    this.drawChess(x * 60 + 30, y * 60 + 30, this.chessColor[this.step % 2]);
+                    this.drawChess(x * lineWidth + lineWidth / 2, y * lineWidth + lineWidth / 2, this.chessColor[this.step % 2]);
                     this.chessMapArr[x][y] = this.chessColor[this.step % 2];
                     //检查是否赢得游戏
                     for (let i = 0; i < 4; i++) {
@@ -174,12 +218,14 @@ var mainScreen = new Vue({
         gameOverText() {
             let gbcanvas = this.$refs.gbcanvas;
             let gbcontext = gbcanvas.getContext("2d");
-            gbcontext.font = '72px "微软雅黑"';
+            let fontpx = this.screenWidth / 12;
+            console.log(this.screenWidth, fontpx);
+            gbcontext.font = '' + fontpx + 'px "微软雅黑"';
             gbcontext.fillStyle = "white";
-            gbcontext.fillText(this.victory, gbcanvas.width / 4, gbcanvas.height / 2);
-            gbcontext.font = '48px "微软雅黑"';
+            gbcontext.fillText(this.victory, this.screenWidth / 4, this.screenHeight / 2);
+            gbcontext.font = '' + fontpx / 1.6 + 'px "微软雅黑"';
             gbcontext.fillStyle = "red";
-            gbcontext.fillText("点击上方按钮重新开始", gbcanvas.width / 4, gbcanvas.height / 2 + 100);
+            gbcontext.fillText("点击上方按钮重新开始", this.screenWidth / 4, this.screenHeight / 2 + this.screenHeight / 10);
         }
     },
 
