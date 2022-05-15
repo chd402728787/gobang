@@ -130,6 +130,10 @@ var mainScreen = new Vue({
         drawChess(x, y, color) {
             let gbcanvas = this.$refs.gbcanvas;
             let context = gbcanvas.getContext("2d");
+            //变立体
+            // let grd = context.createRadialGradient(x, y, this.screenWidth / 15 / 6, x, y, this.screenWidth / 15 / 2);
+            // grd.addColorStop(0, color == "white" ? "black" : "#4c4c4c");
+            // grd.addColorStop(1, color == "white" ? "#dadada" : "#000");
             context.beginPath();
             context.arc(x, y, this.screenWidth / 15 / 2, 0, Math.PI * 4, false);
             context.closePath();
