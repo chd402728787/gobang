@@ -26,6 +26,7 @@
             <!--功能按钮-->
             <div class="fButtons">
                 <input type="button" value="开始" class="start" @click="startInit()" v-show="showBefore" />
+                <input type="button" value="悔棋" class="regret" @click="regret()" v-show="showIng" />
                 <input type="button" value="投降" class="giveUp" @click="giveUp()" v-show="showIng" />
                 <input type="button" value="重新开始" class="playAgain" @click="playAgain()" v-show="showIng" />
             </div>

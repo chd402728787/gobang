@@ -17,6 +17,10 @@ var mainScreen = new Vue({
         showIng: false,
         screenWidth: document.documentElement.clientWidth / 1.5, //屏幕宽度
         screenHeight: document.documentElement.clientWidth / 1.5, //屏幕高度
+        history: [], //历史记录位置
+        historyVal: [], //历史记录不被删除数组
+        stepHistory: 0,
+        domChess: []
     },
 
     created() {
@@ -37,8 +41,21 @@ var mainScreen = new Vue({
         window.addEventListener('resize', e => {
             //棋盘随最小的边进行变化棋盘，比如宽比高小，棋盘就是以宽为主的正方形
             this.windowSize();
+            //尺寸变化后重绘
             setTimeout(() => {
-                this.gameInit();
+                this.drawBoard();
+                if (this.history.length) {
+                    // 绘制棋盘
+                    this.drawBoard();
+                    //绘制棋子
+                    let lineWidth = this.screenWidth / 15;
+                    this.history.forEach(e => {
+                        this.drawChess(e.x * lineWidth + lineWidth / 2, e.y * lineWidth + lineWidth / 2, e.color)
+                        this.chessMapArr[e.x][e.y] = e.color;
+                    });
+                }
+                if (this.flag)
+                    this.gameOverText();
             }, 300);
         })
     },
@@ -142,6 +159,15 @@ var mainScreen = new Vue({
                     console.log('落下棋子', x, y, this.chessColor[this.step % 2])
                     this.drawChess(x * lineWidth + lineWidth / 2, y * lineWidth + lineWidth / 2, this.chessColor[this.step % 2]);
                     this.chessMapArr[x][y] = this.chessColor[this.step % 2];
+
+                    //历史记录位置
+                    this.history.length = this.step;
+                    this.history.push({
+                        x,
+                        y,
+                        color: this.chessColor[this.step % 2]
+                    });
+                    this.stepHistory++;
                     //检查是否赢得游戏
                     for (let i = 0; i < 4; i++) {
                         this.checkWin(x, y, this.chessColor[this.step % 2], this.checkMode[i]);
@@ -155,6 +181,23 @@ var mainScreen = new Vue({
                     alert("已有棋子！")
                 }
             })
+        },
+        //悔棋
+        regret() {
+            if (this.history.length && !this.flag) {
+                this.history.pop(); //删除数组最后一项							
+                // 绘制棋盘
+                this.drawBoard();
+                //绘制棋子
+                let lineWidth = this.screenWidth / 15;
+                this.history.forEach(e => {
+                    this.drawChess(e.x * lineWidth + lineWidth / 2, e.y * lineWidth + lineWidth / 2, e.color)
+                    this.chessMapArr[e.x][e.y] = e.color;
+                });
+                this.step--;
+            } else {
+                alert("已经不能悔棋了~")
+            }
         },
         //投降
         giveUp() {
@@ -174,6 +217,7 @@ var mainScreen = new Vue({
             this.step = 0;
             this.victory = "";
         },
+        //重画
         repaint() {
             let gbcanvas = this.$refs.gbcanvas;
             let context = gbcanvas.getContext("2d");
