@@ -13,16 +13,17 @@ var mainScreen = new Vue({
         ],
         flag: false,
         img: ["images/黑.png", "images/白.png"],
-        showBefore: true,
-        showIng: false,
         screenWidth: document.documentElement.clientWidth / 1.5, //屏幕宽度
         screenHeight: document.documentElement.clientWidth / 1.5, //屏幕高度
         history: [], //历史记录位置
         historyVal: [], //历史记录不被删除数组
         stepHistory: 0,
-        domChess: []
+        domChess: [],
+        showBefore: true,
+        showIng: false,
+        MusicClose: true,
+        MusicOpen: false
     },
-
     created() {
         this.windowSize();
     },
@@ -50,7 +51,7 @@ var mainScreen = new Vue({
                     //绘制棋子
                     let lineWidth = this.screenWidth / 15;
                     this.history.forEach(e => {
-                        this.drawChess(e.x * lineWidth + lineWidth / 2, e.y * lineWidth + lineWidth / 2, e.color)
+                        this.drawChess(e.x * lineWidth + lineWidth / 2, e.y * lineWidth + lineWidth / 2, e.color);
                         this.chessMapArr[e.x][e.y] = e.color;
                     });
                 }
@@ -84,6 +85,8 @@ var mainScreen = new Vue({
         gameInit() {
             //console.log("初始化成功！");
             this.drawBoard();
+            let audio = document.getElementById("bgmusic");
+            audio.play();
         },
         //初始化棋盘数组
         chessArr() {
@@ -154,12 +157,14 @@ var mainScreen = new Vue({
                 let lineWidth = this.screenWidth / 15;
                 let x = Math.floor(e.offsetX / lineWidth);
                 let y = Math.floor(e.offsetY / lineWidth);
+                const clickSound = new Audio("music/落子.wav");
                 //console.log('this.chessMapArr 数组', this.chessMapArr)
                 if (this.chessMapArr[x][y] == 0) {
                     console.log('落下棋子', x, y, this.chessColor[this.step % 2])
                     this.drawChess(x * lineWidth + lineWidth / 2, y * lineWidth + lineWidth / 2, this.chessColor[this.step % 2]);
                     this.chessMapArr[x][y] = this.chessColor[this.step % 2];
-
+                    //播放下棋音效
+                    clickSound.play();
                     //历史记录位置
                     this.history.length = this.step;
                     this.history.push({
@@ -255,6 +260,8 @@ var mainScreen = new Vue({
                 // 游戏结束
                 // console.log('游戏结束')
                 this.gameOverText();
+                let gameOverMusic = new Audio("music/游戏胜利音效.mp3");
+                gameOverMusic.play();
                 this.flag = true;
             }
         },
@@ -270,6 +277,20 @@ var mainScreen = new Vue({
             gbcontext.font = '' + fontpx / 1.6 + 'px "微软雅黑"';
             gbcontext.fillStyle = "red";
             gbcontext.fillText("点击上方按钮重新开始", this.screenWidth / 4, this.screenHeight / 2 + this.screenHeight / 10);
+        },
+        //关闭音乐
+        closeMusic() {
+            let audio = document.getElementById("bgmusic");
+            audio.pause();
+            this.MusicClose = false;
+            this.MusicOpen = true;
+        },
+        //打开音乐
+        openMusic() {
+            let audio = document.getElementById("bgmusic");
+            audio.play();
+            this.MusicClose = true;
+            this.MusicOpen = false;
         }
     },
 

@@ -29,12 +29,16 @@
                 <input type="button" value="悔棋" class="regret" @click="regret()" v-show="showIng" />
                 <input type="button" value="投降" class="giveUp" @click="giveUp()" v-show="showIng" />
                 <input type="button" value="重新开始" class="playAgain" @click="playAgain()" v-show="showIng" />
+                <input type="button" value="关闭音乐" class="closeMusic" @click="closeMusic()" v-show="MusicClose" />
+                <input type="button" value="打开音乐" class="openMusic" @click="openMusic()" v-show="MusicOpen" />
             </div>
             <br />
             <!--游戏主界面-->
             <div class="mainGame">
                 <canvas id="goBangCanvas" ref="gbcanvas" :width="screenWidth" :height="screenHeight"></canvas>
             </div>
+            <!--播放音乐-->
+            <audio id="bgmusic" src="music/麦振鸿 - 混天棋盘.mp3" autoplay="true" loop="true" controls=stopbutton style="display:none;"></audio>
         </div>
     </center>
     <script src="dist/vue.js"></script>

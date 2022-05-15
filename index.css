@@ -16,7 +16,9 @@ body {
 .start,
 .regret,
 .giveUp,
-.playAgain {
+.playAgain,
+.closeMusic,
+.openMusic {
     background: bisque;
     padding: 6px 10px;
     border-radius: 6px;
@@ -33,28 +35,4 @@ body {
     padding: 50px;
     width: 50%;
     margin-top: 50px;
-}
-
-
-/* 中大屏幕 ：大于等于980px*/
-
-@media (min-width: 1200px),
-(min-width: 980px) {}
-
-@media (min-width: 768px) and (max-width: 979px) {}
-
-@media (max-width: 767px) {}
-
-@media (max-width: 480px) {}
-
-
-/* 平板电脑和小屏电脑以下的分辨率 */
-
-@media (min-width: 768px) and (max-width: 979px),
-(max-width: 767px),
-(max-width: 480px) {
-    html {
-        position: relative;
-        min-height: 100%;
-    }
 }
