@@ -25,9 +25,11 @@ var mainScreen = new Vue({
         MusicOpen: false
     },
     created() {
+        //打开时自适应当前屏幕
         this.windowSize();
     },
     mounted() {
+        //项目初始化
         this.gameInit();
         let gbcanvas = this.$refs.gbcanvas;
         let gbcontext = gbcanvas.getContext("2d");
@@ -46,15 +48,16 @@ var mainScreen = new Vue({
             setTimeout(() => {
                 this.drawBoard();
                 if (this.history.length) {
-                    // 绘制棋盘
+                    //绘制棋盘
                     this.drawBoard();
-                    //绘制棋子
+                    //重绘制棋子
                     let lineWidth = this.screenWidth / 15;
                     this.history.forEach(e => {
                         this.drawChess(e.x * lineWidth + lineWidth / 2, e.y * lineWidth + lineWidth / 2, e.color);
                         this.chessMapArr[e.x][e.y] = e.color;
                     });
                 }
+                //游戏结束跳出文本
                 if (this.flag)
                     this.gameOverText();
             }, 300);
@@ -71,6 +74,7 @@ var mainScreen = new Vue({
             }
             let clientWidth = document.documentElement.clientWidth;
             let clientHeight = document.documentElement.clientHeight;
+
             console.log(clientWidth, clientHeight);
             if (clientWidth > clientHeight) {
                 this.screenHeight = clientHeight / 1.5;
@@ -79,13 +83,14 @@ var mainScreen = new Vue({
                 this.screenWidth = clientWidth / 1.5;
                 this.screenHeight = this.screenWidth;
             }
-
         },
         //初始化
         gameInit() {
             //console.log("初始化成功！");
             this.drawBoard();
             let audio = document.getElementById("bgmusic");
+            //开始自动放音乐
+            audio.click();
             audio.play();
         },
         //初始化棋盘数组
@@ -146,7 +151,7 @@ var mainScreen = new Vue({
             const gbcanvas = this.$refs.gbcanvas;
             this.showBefore = false;
             this.showIng = true;
-            //添加点击监听事件
+            //给canvas添加点击监听事件
             gbcanvas.addEventListener("click", e => {
                 if (this.flag == true) {
                     alert("游戏结束,请重新开始~");
@@ -157,14 +162,18 @@ var mainScreen = new Vue({
                 if (e.offsetx < 30 || e.offsetx > 900 || e.offsetY < 10 || e.offsetY > 900) {
                     return;
                 }
-                //落子
+
                 let lineWidth = this.screenWidth / 15;
+                //给棋子限定落子范围
                 let x = Math.floor(e.offsetX / lineWidth);
                 let y = Math.floor(e.offsetY / lineWidth);
+                //添加落子音效
                 const clickSound = new Audio("music/落子.wav");
                 //console.log('this.chessMapArr 数组', this.chessMapArr)
                 if (this.chessMapArr[x][y] == 0) {
-                    console.log('落下棋子', x, y, this.chessColor[this.step % 2])
+                    //落子位置和颜色
+                    console.log('落下棋子', x, y, this.chessColor[this.step % 2]);
+                    //落子
                     this.drawChess(x * lineWidth + lineWidth / 2, y * lineWidth + lineWidth / 2, this.chessColor[this.step % 2]);
                     this.chessMapArr[x][y] = this.chessColor[this.step % 2];
                     //播放下棋音效
@@ -238,6 +247,7 @@ var mainScreen = new Vue({
         //胜负判断
         checkWin(x, y, color, mode) {
             let count = 1; //记录
+            //判断棋子的水平竖直斜上斜下方向是否相同 相同则count加一 count>=5时游戏结束
             for (let i = 1; i < 5; i++) {
                 if (this.chessMapArr[x + i * mode[0]]) {
                     if (this.chessMapArr[x + i * mode[0]][y + i * mode[1]] == color) {
